@@ -33,9 +33,9 @@ public class ShapeI extends Piece {
             temp[3] = new ShapeI(xMin, yMin - 1, 1);
         }
         if(direction == 1) {
-            temp[0] = new ShapeI(xMin - 2, yMin - 2, 0);
-            temp[1] = new ShapeI(xMin - 2, yMin - 3, 0);
-            temp[2] = new ShapeI(xMin - 2, yMin - 1, 0);
+            temp[0] = new ShapeI(xMin - 2, yMin + 2, 0);
+            temp[1] = new ShapeI(xMin - 2, yMin + 3, 0);
+            temp[2] = new ShapeI(xMin - 2, yMin + 1, 0);
             temp[3] = new ShapeI(xMin - 2, yMin, 0);
         }
         if(direction == 2) {
@@ -59,7 +59,8 @@ public class ShapeI extends Piece {
                 yMax = temp[i].yMax;
                 this.blocks = temp[i].blocks;
                 this.projection = getProjection();
-                direction = (direction + 1) % 4;
+                this.direction = (this.direction + 1) % 4;
+                return;
             }
         }
     }

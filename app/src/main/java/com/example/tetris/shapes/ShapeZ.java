@@ -44,6 +44,7 @@ public class ShapeZ extends Piece {
                 this.blocks = temp[i].blocks;
                 this.projection = getProjection();
                 direction = (direction + 1) % 2;
+                return;
             }
         }
     }

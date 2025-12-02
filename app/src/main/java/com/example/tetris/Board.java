@@ -30,7 +30,6 @@ public class Board {
         int y = 22;   // phía trên 20
 
         switch (rand) {
-            // TODO: thêm ShapeO, ShapeT,... nếu sếp đã code rồi
             case 1: current = new ShapeJ(x, y, 0); break;
             case 2: current = new ShapeL(x, y, 0); break;
             case 3: current = new ShapeO(x, y); break;

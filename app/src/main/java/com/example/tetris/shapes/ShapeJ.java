@@ -68,6 +68,7 @@ public class ShapeJ extends Piece {
                 this.blocks = temp[i].blocks;
                 this.projection = getProjection();
                 direction = (direction + 1) % 4;
+                return;
             }
         }
     }

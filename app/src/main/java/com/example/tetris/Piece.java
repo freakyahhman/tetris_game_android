@@ -5,13 +5,21 @@ public abstract class Piece {
     protected int[][] blocks;
     public Board board;
     public int[][] projection;
-    protected int direction = 0;
+    protected int direction;
 
     public Piece(int xMin, int yMin) {
+        this.blocks = new int[4][2];
         this.xMin = xMin;
         this.yMin = yMin;
     }
 
+    public int[][] cloneBlocks() {
+        int[][] ans = new int[blocks.length][];
+        for(int i = 0; i < blocks.length; i++) {
+            ans[i] = blocks[i].clone();
+        }
+        return ans;
+    }
     public void fitBoard() {
         if (xMin < 0) {
             for(int[] block : blocks) {
@@ -31,35 +39,48 @@ public abstract class Piece {
     }
 
     public int[][] getProjection() {
-        int[][] ans = new int[blocks.length][];
-        for(int i = 0; i < blocks.length; i++) {
-            ans[i] = blocks[i].clone();
-        }
+        int[][] ans = cloneBlocks();
         boolean next = true;
-        for(int[] point : ans) {
-            if(board.filled[point[0] - 1][point[1]]) {
-                next = false;
-                break;
+        while (true) {
+            for (int[] point : ans) {
+                if (board.filled[point[0] - 1][point[1]]) {
+                    next = false;
+                    break;
+                }
+            }
+            if(!next)
+                return ans;
+            for(int[] point : ans) {
+                point[0] -= 1;
             }
         }
-        if(!next)
-            return ans;
-        for(int[] point : ans) {
-            point[0] -= 1;
-        }
-        return ans;
     }
     public void rotate() {}
 
     public boolean checkDone() {
-        for (int i = 0; i < blocks.length; i++) {
-            if (blocks[i][0] == projection[i][0]) return true;
-        }
-        return false;
+        int[][] ans = cloneBlocks();
+        for (int[] b : ans) b[0] -= 1;
+
+        return checkCollision(ans);
     }
 
-
     public boolean checkCollision(int blocks[][]) {
+//        int xMin = 10;
+//        int xMax = -1;
+//        for(int[] block : blocks) {
+//            if(block[1] < xMin) xMin = block[1];
+//            if(block[1] > xMax) xMax = block[1];
+//        }
+//        if(xMin < 0) {
+//            for(int[] block : blocks) {
+//                block[1] -= xMin;
+//            }
+//        }
+//        if(xMax > 9) {
+//            for(int[] block : blocks) {
+//                block[1] -= xMax - 9;
+//            }
+//        }
         for(int[] block : blocks) {
             if(block[1] < 0 || block[1] > 9) return true;
             if(board.filled[block[0]][block[1]]) return true;
@@ -69,10 +90,7 @@ public abstract class Piece {
 
     public void shiftLeft() {
         if(xMin == 0) return;
-        int[][] ans = new int[blocks.length][];
-        for(int i = 0; i < blocks.length; i++) {
-            ans[i] = blocks[i].clone();
-        }
+        int[][] ans = cloneBlocks();
         for(int[] block : ans) block[1] -= 1;
         if(!checkCollision(ans)) {
             xMin -= 1;
@@ -83,10 +101,7 @@ public abstract class Piece {
     }
     public void shiftRight() {
         if(xMax == 9) return;
-        int[][] ans = new int[blocks.length][];
-        for(int i = 0; i < blocks.length; i++) {
-            ans[i] = blocks[i].clone();
-        }
+        int[][] ans = cloneBlocks();
         for(int[] block : ans) block[1] += 1;
         if(!checkCollision(ans)) {
             xMin += 1;
@@ -96,10 +111,13 @@ public abstract class Piece {
         }
     }
     public void shiftDown() {
-        if(checkDone()) return;
-        for(int[] block : blocks) block[0] -= 1;
-        yMin -= 1;
-        yMax -= 1;
+        int[][] ans = cloneBlocks();
+        for(int[] point : ans) point[0] -= 1;
+        if(!checkCollision(ans)) {
+            yMin -= 1;
+            yMax -= 1;
+            for(int[] block : blocks) block[0] -= 1;
+        }
     }
 
     public void fillBoard() {

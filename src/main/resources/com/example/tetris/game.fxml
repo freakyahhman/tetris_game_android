@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.tetris.controller.GameController"
+            style="-fx-background-color: #222;">
+    <center>
+        <Canvas fx:id="gameCanvas" width="300" height="600" />
+    </center>
+    <right>
+        <VBox alignment="CENTER" spacing="20" style="-fx-padding: 20;">
+            <Label text="TETRIS" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Label fx:id="scoreLabel" text="Score: 0" style="-fx-text-fill: white; -fx-font-size: 18px;"/>
+            <Label text="Controls:" style="-fx-text-fill: #aaa;"/>
+            <Label text="← : Move Left" style="-fx-text-fill: #aaa;"/>
+            <Label text="→ : Move Right" style="-fx-text-fill: #aaa;"/>
+            <Label text="↑ : Rotate" style="-fx-text-fill: #aaa;"/>
+            <Label text="↓ : Soft Drop" style="-fx-text-fill: #aaa;"/>
+        </VBox>
+    </right>
+</BorderPane>

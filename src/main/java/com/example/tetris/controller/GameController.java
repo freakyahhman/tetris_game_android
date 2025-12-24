@@ -1,6 +1,7 @@
 package com.example.tetris.controller;
 
 import com.example.tetris.model.GameModel;
+import com.example.tetris.model.Tetromino;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -16,7 +17,7 @@ public class GameController {
 
     private GameModel model;
     private GraphicsContext gc;
-    private static final int BLOCK_SIZE = 30;
+    private static final int BLOCK_SIZE = 25;
     private long lastUpdate = 0;
 
     @FXML
@@ -24,77 +25,66 @@ public class GameController {
         model = new GameModel();
         gc = gameCanvas.getGraphicsContext2D();
         draw();
-        startGameLoop();
-    }
 
-    private void startGameLoop() {
-        AnimationTimer timer = new AnimationTimer() {
+        new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (now - lastUpdate >= 500_000_000) { // 0.5s per tick
-                    update();
+                if (now - lastUpdate >= 1_000_000_000) {
+                    model.drop();
+                    draw();
                     lastUpdate = now;
                 }
             }
-        };
-        timer.start();
-    }
-
-    private void update() {
-        if (model.isGameOver()) return;
-        if (!model.move(0, 1)) {
-            model.lockPiece();
-        }
-        draw();
+        }.start();
     }
 
     public void handleInput(KeyEvent event) {
-        if (model.isGameOver()) return;
-
         KeyCode code = event.getCode();
         if (code == KeyCode.LEFT) model.move(-1, 0);
         else if (code == KeyCode.RIGHT) model.move(1, 0);
-        else if (code == KeyCode.UP) model.rotate();
-        else if (code == KeyCode.DOWN) model.move(0, 1);
+        else if (code == KeyCode.UP || code == KeyCode.W) model.rotate(1);
+        else if (code == KeyCode.Q) model.rotate(-1);
+        else if (code == KeyCode.DOWN) model.drop();
 
         draw();
     }
 
     private void draw() {
         // Clear background
-        gc.setFill(Color.BLACK);
-        gc.fillRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
+        gc.setFill(Color.web("#2b2b33"));
+        gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight()); // Transparent
+        gc.fillRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());  // Colored
 
-        // Draw Locked Blocks
+        // 1. Draw Grid
         int[][] grid = model.getGrid();
         for (int r = 0; r < GameModel.ROWS; r++) {
             for (int c = 0; c < GameModel.COLS; c++) {
                 if (grid[r][c] != 0) {
-                    gc.setFill(Color.GRAY);
-                    gc.fillRect(c * BLOCK_SIZE, r * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+                    drawBlock(c, r, Tetromino.getColorByValue(grid[r][c])); // Helper still useful for Grid
                 }
             }
         }
 
-        // Draw Current Piece
-        int[][] shape = model.getCurrentShape();
-        gc.setFill(model.getCurrentPiece().getColor());
+        // 2. Draw Current Piece (Using Object Data)
+        Tetromino current = model.getCurrentTetromino();
+        int[][] shape = current.getShape();
+        int curX = current.x;
+        int curY = current.y;
+        Color color = current.getColor(); // Get specific color from object
+
         for (int r = 0; r < shape.length; r++) {
             for (int c = 0; c < shape[0].length; c++) {
                 if (shape[r][c] != 0) {
-                    gc.fillRect((model.getCurrentX() + c) * BLOCK_SIZE,
-                            (model.getCurrentY() + r) * BLOCK_SIZE,
-                            BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+                    drawBlock(curX + c, curY + r, color);
                 }
             }
         }
 
-        // Draw Game Over text
-        if(model.isGameOver()){
-            gc.setFill(Color.WHITE);
-            gc.fillText("GAME OVER", 100, 300);
-        }
-
         scoreLabel.setText("Score: " + model.getScore());
+    }
+
+    private void drawBlock(int x, int y, Color color) {
+        gc.setFill(color);
+        gc.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE - 2, BLOCK_SIZE - 2);
     }
 }

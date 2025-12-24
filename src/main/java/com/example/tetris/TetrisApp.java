@@ -12,13 +12,13 @@ public class TetrisApp extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(TetrisApp.class.getResource("game.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 500, 600);
 
-        // Lấy Controller để truyền key events vào
+        Scene scene = new Scene(fxmlLoader.load(), 450, 500);
+
         GameController controller = fxmlLoader.getController();
         scene.setOnKeyPressed(event -> controller.handleInput(event));
 
-        stage.setTitle("JavaFX Tetris");
+        stage.setTitle("JavaFX Simple Tetris");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
